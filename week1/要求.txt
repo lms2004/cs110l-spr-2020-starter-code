@@ -1,0 +1,381 @@
+CS 110L 课程计划
+Slack
+⚠️ 注意！您正在查看旧的课程网站。请点击此处查看本课程的最新版本。⚠️
+
+第一周练习：Hello World
+欢迎来到 CS 110L！我们很高兴你能加入我们。
+
+目的
+本周的练习旨在让您熟悉编译/运行 Rust 代码并使用基本的 Rust 语法。学习任何语言（无论是人类语言还是计算机语言）的最好方法都是通过沉浸式学习，因此你可以将此视为在 Rustland 的留学经历。记得在 Instagram 上发帖，吃点 Döner Kebap，享受夜生活。我们希望通过这个练习，下周在讨论你可能在学习过的语言中未曾见过的概念时，可以顺利进行。
+
+我们将在这里包含一些有关作业的建议，但你可能还需要查看 Rust 文档、Stack Overflow 等。我们（Ryan 和 Armin）将通过 Slack 为您提供帮助。您也可以与同学交流并一起工作（但您必须独立编写作业的解决方案）。
+
+截止日期：太平洋时间4月14日星期二上午10:30
+
+这项作业应在1-3小时内完成。虽然这项作业只是为了让您适应 Rust 语言，但我们预期它可能会有挑战性；Rust 是一门相当独特的语言，需要花一些时间来适应。如果您花了2个小时还未接近完成，请让我们知道，以便我们可以解决可能阻碍您的任何问题。
+
+第一部分：入门
+本周练习的第一部分是运行一个简单的 “Hello world” 程序！
+
+我们已经在 myth 上为您设置了 Rust 工具链，因此如果您想在 myth 上开发代码（就像在 CS 110 中那样），您应该没问题。不过，如果您想在本地计算机上运行代码（例如，因为网络连接差或身处世界另一端），您将需要安装 Rust 工具链。
+
+无论您决定在 myth 上工作还是在个人计算机上工作，都应该花点时间为 Rust 设置开发环境。Ryan 写了一些可能有帮助的提示。如果您使用 vim，我强烈建议从该提示页面安装 Rust 插件，这将大大改善您的体验。对于其他编辑器，请快速搜索看看别人推荐安装哪些插件。
+
+现在，让我们获取起始代码！在这门课程中，我们将使用 GitHub 来管理作业提交。GitHub 是一个很棒的协作平台，建立在 git 之上，git 是一种版本控制软件。（版本控制软件允许您管理代码的不同版本；您可以在不同时间点保存快照，如果代码出了问题，可以回到之前的快照。这比保存 code.c、code-working.c、code-working-copy.c、code-final.c、code-final-seriously.c 和 code-final-i-actually-submitted.c 然后搞不清哪个是哪个要好得多。）git 和 GitHub 是工业标准工具，如果您以前没有接触过它们，我们认为接触一些轻松友好的版本控制是很有价值的。
+
+起始代码可在 GitHub 上找到。您可以将该仓库 “克隆”（下载）到计算机：
+
+bash
+Copy code
+git clone https://github.com/reberhardt7/cs110l-spr-2020-starter-code.git
+然后，cd 到 week1/part-1-hello-world。这个目录包含一个 Rust 包。您可以在 src/ 目录下看到源代码；查看 src/main.rs。
+
+让我们尝试编译这段代码！为此，请运行以下命令：
+
+bash
+Copy code
+cargo build
+Cargo 有点像 make，但它做的事情更多。如果您的项目有依赖项，Cargo 会自动处理下载和配置这些依赖项。（它的功能类似于 Javascript 领域的 npm 和 Python 领域的 setup.py。）Cargo 还可以运行自动化测试、生成文档、基准测试代码等。我们现在不会讨论这些，但您会在学期后期看到一些有用的内容。
+
+当您运行 cargo build 时，Cargo 会编译可执行文件并将其保存到 target/debug/hello-world。现在尝试运行它：
+
+bash
+Copy code
+🍌 ./target/debug/hello-world
+Hello, world!
+（是的，我的 shell 提示符是一个香蕉。）
+
+为了方便起见，Cargo 提供了一个 run 命令，可以在一次操作中同时编译并运行程序。尝试修改 src/main.rs 以打印新内容，然后运行 cargo run（不运行 cargo build）。Cargo 会注意到文件已更改，重新编译代码，并为您运行二进制文件。
+
+bash
+Copy code
+🍌 cargo run
+   Compiling hello-world v0.1.0
+    Finished dev [unoptimized + debuginfo] target(s) in 0.77s
+     Running `target/debug/hello-world`
+You rock!
+恭喜你！你已经运行了你的第一个 Rust 程序！
+
+第二部分：Rust 热身
+语法
+首先，让我们快速浏览一下 Rust 的语法。很多内容可能会感觉很熟悉，但与其他语言相比，Rust 有一些独特之处。
+
+注意：这些点是根据 Will Crichton 的 CS 242 Rust 实验手册扩展的。
+
+Rust 中的数值类型包括 i8、i16、i32 和 i64（所有这些都存储有符号的 - 正数或负数 - 数字），以及 u8、u16、u32 和 u64（存储无符号的 - 仅非负 - 数字）。数字 8、16 等表示值的位数。这是为了避免 C 遇到的问题，因为 C 规范未定义数值类型的标准宽度。你将在 CS 110 的作业2中遇到这个问题；今天，在大多数计算机上，一个 int 存储4个字节（对应 Rust 的 i32），但你将处理70年代的代码，其中 int 只存储两个字节。
+
+要声明变量，我们使用 let 关键字并指定变量类型：
+
+rust
+Copy code
+// 声明一个包含有符号32位数字的变量。（相当于 C 中的 "int n = 1"）
+let n: i32 = 1;
+Rust 有一个很棒的功能叫做 “类型推断”。它允许您在编译器能够确定类型时省略变量的类型声明。大多数 Rust 代码看起来是这样的，只有在编译器无法确定应使用的类型时才包括显式类型注释。
+
+rust
+Copy code
+let n = 1;
+与大多数语言不同，Rust 中的变量默认是常量。这是为了减少错误；如果您修改了一个不打算（即没有明确标记为可变）的变量，编译器会给您一个错误。添加 mut 使变量可变。
+
+rust
+Copy code
+let mut n = 0;
+n = n + 1;  // 编译没问题
+在 Rust 中，字符串有点奇怪。Rust 有两种字符串类型：&str 和 String。&str 是指向内存中某个字符串的不可变指针。例如：
+
+rust
+Copy code
+let s: &str = "Hello world";    // ": &str" 注释是可选的
+在这里，字符串 “Hello world” 被放置在程序的只读数据段中（这在 C 中也是如此），s 是指向该内存的只读指针。
+
+String 类型存储堆分配的字符串。只要使用 mut 关键字，您就可以修改 Strings。
+
+rust
+Copy code
+let mut s: String = String::from("Hello "); // "String" 类型注释是可选的
+s.push_str("world!");
+第一行在堆上分配内存；s 是一个包含指向该内存指针的 String 对象。第二行将字符串附加到堆缓冲区，必要时重新分配/调整缓冲区大小。字符串的内存将在 s 最后一次使用后自动释放。我们将在周四的讲座中详细讨论内存分配/释放。（这有点类似于 C++ 字符串的工作方式。）
+
+存储一系列事物最简单的方法是使用向量：
+
+rust
+Copy code
+let mut v: Vec<i32> = Vec::new();
+v.push(2);
+v.push(3);
+// 即使在这里，": Vec<i32>" 类型注释也是可选的。如果省略它，编译器会查看向量的使用方式，从中推断出向量元素的类型。很棒！
+Rust 还支持固定大小的数组。与 C 不同，数组的长度作为数组类型的一部分存储。此外，数组访问通常在运行时进行边界检查。请不要缓冲区溢出！
+
+rust
+Copy code
+let mut arr: [i32; 4] = [0, 2, 4, 8];
+arr[0] = -2;
+println!("{}", arr[0] + arr[1]);
+您可以使用迭代器和非常好的 Python 风格的语法迭代集合：
+
+rust
+Copy code
+for i in v.iter() { // v 是上面的向量
+    println!("{}", i);
+}
+While 循环：
+
+rust
+Copy code
+while i < 20 {
+    i += 1;
+}
+Rust 还有一个特殊的循环，应代替 while true 使用：
+
+rust
+Copy code
+let mut i = 0;
+loop {
+    i += 1;
+    if i == 10 { break; }
+}
+如果您想知道为什么存在这个循环，可以在这里进行一些讨论。长话短说，它帮助编译器对变量初始化进行一些假设。
+
+最后，Rust 函数是这样声明的：
+
+rust
+Copy code
+// 返回类型为 i32 的函数
+fn sum(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+// 无返回值函数（无 "->"）
+fn main() {
+    // 做一些事情...
+}
+这里有两个可能让人惊讶的地方：
+
+与变量（Rust 会愉快地推断变量类型）不同，对于返回值的函数，您必须指定返回类型。
+
+sum 函数中没有 return 关键字！而且……少了一个分号！
+
+这两件事实际上是一起的。Rust 是一种基于表达式的语言。在大多数您可能熟悉的语言中，有表达式（评估为值）和语句（不评估为值）。例如，在 C++ 中，三元运算符是一个表达式；它评估为您可以存储在变量中的值：
+
+c++
+Copy code
+int x = someBool ? 2 : 4;
+相比之下，if 语句是语句，因为它们不评估为值。这段代码无法编译：
+
+c++
+Copy code
+int x = if (someBool) {
+    2;
+} else {
+    4;
+}
+然而，在 Rust 中，一切都是表达式。（这与安全性无关。因为 Rust 受到函数式编程语言的很大影响，这超出了本课程的范围。）这是有效的 Rust 代码：
+
+rust
+Copy code
+let x = if someBool { 2 } else { 4 }
+函数是由用分号分隔的表达式序列组成的，评估为最后一个表达式的值。上面的 sum 函数只有一个表达式 a + b，因此 sum 函数将评估为（即返回）a + b 的值。
+
+如果您包含一个分号并编写以下代码，实际上会出现编译错误：
+
+rust
+Copy code
+fn sum(a: i32, b: i32) -> i32 {
+    a + b;
+}
+记住函数是用分号分隔的表达式。因此，这个函数实际上包含两个表达式：a + b（分号前）和一个空表达式（分号后）。由于最后一个表达式为空，这个函数最终不返回任何值。编译器会给您一个错误，因为该函数被声明为返回 i32 类型。
+
+由于一切都是表达式，您可以编写这样的函数：
+
+rust
+Copy code
+fn fib(n: i32) -> i32 {
+    if n <= 1 { n } else { fib(n-1) + fib(n-2) }
+}
+这可能是从 C、Java 和 Python 等语言转过来时最难适应的东西之一，但一旦适应，它可能是一种优雅且简洁的编程方式。如果您对这种设计背后的影响感兴趣，请考虑选修 CS 242（编程语言）！我们将在下周更多地讨论这种语法，因此如果现在感到困惑也不用担心。
+
+这是我们认为您需要了解的语法！让我们写一些代码吧！
+
+练习
+这些练习由 Will Crichton 为 CS 242 编写。
+
+cd 到 part-2-warmup/ 并查看 src/main.rs。您应实现以下三个函数：
+
+实现 add_n，它接受一个数字向量和一个数字 n。该函数应返回一个新向量，其元素是原始向量 v 中的数字加上 n。
+实现 add_n_inplace，它与 add_n 做同样的事情，但直接修改 v（就地）并且不返回任何内容。
+实现 dedup，它就地删除向量中的重复元素（即直接修改 v）。如果向量中有重复的元素，您应该保留首次出现的元素。您可能需要使用 HashSet 来实现。
+在 src/main.rs 的末尾，您会发现一系列标有 #[test] 的函数。这些是单元测试，用于帮助您验证函数是否正确。您可以通过运行 cargo test 来运行这些测试。把它当作一个 sanitycheck 等效工具！
+
+您必须自己编写解决方案，但可以随意 Google 如何在 Rust 中做事。我们也非常乐意在 Slack 上回答问题。这是一个友好而快速的热身练习，因此如果您发现自己被任何东西卡住，请告诉我们！
+
+第三部分：Hangman
+您的目标是实现一个命令行的 Hangman 游戏。以下是游戏可能运行的示例：
+
+plaintext
+Copy code
+Welcome to CS110L Hangman!
+The word so far is -------
+You have guessed the following letters:
+You have 5 guesses left
+Please guess a letter: r
+
+The word so far is ------r
+You have guessed the following letters: r
+You have 5 guesses left
+Please guess a letter: s
+
+The word so far is ---s--r
+You have guessed the following letters: rs
+You have 5 guesses left
+Please guess a letter: t
+
+The word so far is ---st-r
+You have guessed the following letters: rst
+You have 5 guesses left
+Please guess a letter: l
+
+The word so far is l--st-r
+You have guessed the following letters: rstl
+You have 5 guesses left
+Please guess a letter: a
+Sorry, that letter is not in the word
+
+The word so far is l--st-r
+You have guessed the following letters: rstla
+You have 4 guesses left
+Please guess a letter: b
+
+The word so far is l-bst-r
+You have guessed the following letters: rstlab
+You have 4 guesses left
+Please guess a letter: c
+Sorry, that letter is not in the word
+
+The word so far is l-bst-r
+You have guessed the following letters: rstlabc
+You have 3 guesses left
+Please guess a letter: o
+
+The word so far is lobst-r
+You have guessed the following letters: rstlabco
+You have 3 guesses left
+Please guess a letter: e
+
+Congratulations you guessed the secret word: lobster!
+或者，您可能没有猜到单词：
+
+plaintext
+Copy code
+Welcome to CS110L Hangman!
+The word so far is --------
+You have guessed the following letters:
+You have 5 guesses left
+Please guess a letter: a
+
+The word so far is --a-----
+You have guessed the following letters: a
+You have 5 guesses left
+Please guess a letter: b
+Sorry, that letter is not in the word
+
+The word so far is --a-----
+You have guessed the following letters: ab
+You have 4 guesses left
+Please guess a letter: c
+
+The word so far is c-a-----
+You have guessed the following letters: abc
+You have 4 guesses left
+Please guess a letter: d
+Sorry, that letter is not in the word
+
+The word so far is c-a-----
+You have guessed the following letters: abcd
+You have 3 guesses left
+Please guess a letter: e
+Sorry, that letter is not in the word
+
+The word so far is c-a-----
+You have guessed the following letters: abcde
+You have 2 guesses left
+Please guess a letter: f
+
+The word so far is c-a-f---
+You have guessed the following letters: abcdef
+You have 2 guesses left
+Please guess a letter: g
+Sorry, that letter is not in the word
+
+The word so far is c-a-f---
+You have guessed the following letters: abcdefg
+You have 1 guesses left
+Please guess a letter: h
+
+The word so far is c-a-f--h
+You have guessed the following letters: abcdefgh
+You have 1 guesses left
+Please guess a letter: i
+
+The word so far is c-a-fi-h
+You have guessed the following letters: abcdefghi
+You have 1 guesses left
+Please guess a letter: j
+Sorry, that letter is not in the word
+
+Sorry, you ran out of guesses!
+程序在您正确完成单词或猜测次数用完时退出。
+
+建议和提示
+记住，变量默认是不可变的。如果您计划在不久的将来更改变量，您需要将其标记为可变，例如 let mut counter = 0。
+您可以使用 == 来比较字符串。
+使用 println!(...) 将内容打印到标准输出。要打印变量，可以这样写：
+rust
+Copy code
+println!("变量内容：{}", some_variable);
+要读取用户输入，可以这样写：
+rust
+Copy code
+print!("请猜一个字母：");
+// 确保上一个提示被显示：
+io::stdout()
+    .flush()
+    .expect("刷新标准输出时出错。");
+let mut guess = String::new();
+io::stdin()
+    .read_line(&mut guess)
+    .expect("读取行时出错。");
+您不需要完全匹配我们的输出。只要制作一个可以工作的游戏！
+我们不期望您处理错误或重新提示用户输入。然而，这样做会让您更好地练习语言。
+我们还没有讨论 Options 或 Results，它们是 Rust 的重要部分，将在下周的讲座中讲到。如果您在 Google 上查找如何做某事，可能会遇到涉及调用 unwrap() 的建议。您可以使用这样的代码，但可能有更简单的方法。请在 Slack 上联系我们，我们很乐意给您建议。
+Rust 编译器是您的朋友和敌人。它的批评通常是建设性的，不像大多数 C++ 编译器 :) Rust 团队花了很长时间尝试使错误信息尽可能有帮助，我们希望您觉得它们有用。
+第四部分：每周调查
+如您所知，这是我们第一次教授这门课程，我们希望尽可能让它成为一个愉快且有意义的体验。请通过这项调查让我们知道您的情况。
+
+提交调查后，您应该会看到一个密码。在提交之前将此代码放入 part-4.txt 中。
+
+提交作业
+在工作时，您可能希望提交代码以保存工作快照。这样，如果出现问题，您总是可以恢复到以前的状态。
+
+如果您从未使用过 git，您可能需要运行这些命令来配置它：
+
+bash
+Copy code
+git config --global user.name "Firstname Lastname"
+git config --global user.email "yourSunetid@stanford.edu"
+完成后，您不需要再做一次。
+
+然后，要提交您的工作，运行以下命令：
+
+bash
+Copy code
+git commit -am "在这里输入一些标题以标识此快照！"
+为了提交您的工作，请提交它，然后运行 git push。这会将您的提交（快照）上传到 GitHub，我们可以访问它们。您可以通过访问 https://github.com/cs110l/week1-yourSunetid 并浏览代码来验证您的代码是否已提交。您可以多次 git push。
+
+评分
+这项作业有四个部分，每部分占 25%。如果我们可以看到您已努力完成每个部分，您将获得全部 25%。
+
+
+
+
+
+
