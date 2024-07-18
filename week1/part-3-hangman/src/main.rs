@@ -49,8 +49,6 @@ fn input() -> char {
 }
 
 
-
-
 fn main() {
     let secret_word = pick_a_random_word();
     let secret_word_chars: Vec<char> = secret_word.chars().collect();
